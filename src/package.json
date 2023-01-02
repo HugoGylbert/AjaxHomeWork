@@ -1,10 +1,10 @@
 {
-  "name": "hw",
+  "name": "home_work_ajax",
   "version": "1.0.0",
   "description": "Ajax házi feladat",
   "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": ""
   },
   "author": "Verók Balázs",
   "license": "ISC",
