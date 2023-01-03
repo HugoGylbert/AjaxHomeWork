@@ -14,8 +14,10 @@ function checkErrorsApi(data) {
     case 500:
       throw new Error("Server Error");
       break;
-    default:
-      return data.json();
+    case 200:
+       data.json();
+       break;
+       default : break;
   }
 }
 function TopinfoFlag(e) {
