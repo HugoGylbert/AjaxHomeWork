@@ -11,8 +11,11 @@
   <script src="./src/node_modules/bootstrap/dist/js/bootstrap.js"></script>
   <script>
     window.onload = () => {
-      console.log("loaded")
+      TopinfoFlag("Loading Employee Data Please Wait... ", 1)
+      
+      setTimeout(()=>{
       getData()
+      }, 1*1000) 
 document.getElementById("next").onclick= ()=>{
  
   document.getElementById("tbody").innerHTML=""
@@ -30,27 +33,66 @@ document.getElementById("previous").onclick= ()=>{
 </head>
 
 <body>
+  
+  <div class="modal fade"  id="ModalCard" >
+    <div class="modal-dialog modal-dialog-centered" id="ModalCardContainer">
+      <div class="modal-content" id="CardModalBody">
+      <div class="card" >
+        <img src="" class="card-img-top" alt="" id="modalCardPic">
+        <div class="card-body">
+          <h5 class="card-title" id="cardTitle">Card title</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+  </div>
+</div>
+</div>
 
-  <div style="position: sticky;" id="Alert"></div>
-
-  <div class="container container-sm col-3">
+  <div class="modal fade" data-bs-backdrop="static" id="staticBackdrop" >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+          
+        </div>
+        <div class="modal-body" id="ModalBody">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id="ModalDelete">Yes, I am Sure</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container container-sm col-4 table-responsive-sm">
+    <div id="Alert"></div>
     <nav aria-label="Page navigation example" id="page">
       <ul class="pagination justify-content-end">
         <li class="page-item"><a class="page-link" href="#" id="previous">Previous</a></li>
-        <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li> -->
+     
         <li class="page-item"><a class="page-link" href="#" id="next" >Next</a></li>
       </ul>
     </nav>
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover table-borderless ">
       <thead>
 
       </thead>
       <tbody id="tbody">
-<img src="" alt="">
+        <div id="placeholder">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder col-7"></span>
+            <span class="placeholder col-4"></span>
+          <span class="placeholder col-4"></span>
+          <span class="placeholder col-6"></span>
+          <span class="placeholder col-8"></span>
+        </p>
+      </div>
       </tbody>
     </table>
-  </div>
+  </div> 
 </body>
 
 </html>
