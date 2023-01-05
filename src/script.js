@@ -59,7 +59,7 @@ function TopinfoFlag(e, t = 10) {
 }
 function showContent(data) {
   const tableBody = document.getElementById("tbody");
-
+console.log(data)
   const placeholder = (document.getElementById("placeholder").style.display = "none");
   for (let c of data.data) {
     tableBody.appendChild(createContentHtml(c, data));
