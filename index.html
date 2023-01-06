@@ -12,50 +12,95 @@
   <script>
     window.onload = () => {
       TopinfoFlag("Loading Employee Data Please Wait... ", 1)
-      
-      setTimeout(()=>{
-      getData()
-      }, 1*1000) 
-document.getElementById("next").onclick= ()=>{
- 
-  document.getElementById("tbody").innerHTML=""
-getData("https://reqres.in/api/users?page=2")
-}
-document.getElementById("previous").onclick= ()=>{
- 
-  document.getElementById("tbody").innerHTML=""
-  getData("https://reqres.in/api/users?page=1")
-}
 
-}
+      setTimeout(() => {
+        getData()
+      }, 1 * 1000)
+      document.getElementById("next").onclick = () => {
+
+        document.getElementById("tbody").innerHTML = ""
+        getData("https://reqres.in/api/users?page=2")
+      }
+      document.getElementById("previous").onclick = () => {
+
+        document.getElementById("tbody").innerHTML = ""
+        getData("https://reqres.in/api/users?page=1")
+      }
+
+    }
   </script>
   <title>Ajax beadandó</title>
 </head>
 
 <body>
-  
-  <div class="modal fade"  id="ModalCard" >
-    <div class="modal-dialog modal-dialog-centered" id="ModalCardContainer">
-      <div class="modal-content" >
-      <div class="card" >
-        <img src="" class="card-img-top" alt="" id="modalCardPic">
-        <div class="card-body" id="CardModalBody" >
-          <h5 class="card-title" id="cardTitle"></h5>
-          <p class="card-text" id="ModalP"></p>
-                  
+
+  <div class="modal fade" data-bs-backdrop="static" id="ModalModifyCard">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" id="ModalCardModifyContent">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modifHeader">Modify</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="ModalModifyBody">
+          <form action="">
+
+
+            <div class="form-floating mb-2">
+              <input type="text" class="form-control" id="modifFName" placeholder="First name">
+              <label for="floatingInput">First Name</label>
+            </div>
+          
+            <div class="form-floating mb-2">
+              <input type="text" class="form-control" id="modifLName" placeholder="Last name">
+              <label for="floatingInput">Last Name</label>
+            </div>
+           
+            <div class="form-floating mb-2">
+              <input type="email" class="form-control" id="modifEmail" placeholder="name@example.com">
+              <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="url" class="form-control" id="modifURL" placeholder="http://mypix/image.jpg">
+              <label for="floatingInput">Profile picture link</label>
+            </div>
+            <div class="modal-footer">
+
+              <button class="btn btn-secondary " data-bs-dismiss="modal">Cancel</button>
+              <button class="btn btn-warning" id="ModifyBtn">Modify</button>
+            </div>
+          </form>
         </div>
       </div>
+    </div>
   </div>
-</div>
-</div>
 
-  <div class="modal fade" data-bs-backdrop="static" id="staticBackdrop" >
-    <div class="modal-dialog modal-dialog-centered">
+
+
+  <div class="modal fade" id="ModalCard">
+    <div class="modal-dialog modal-dialog-centered modal-sm" id="ModalCardContainer">
+      <div class="modal-content">
+        <div class="card">
+          <div class=" card-body" id="CardModalBody">
+            <img src="" class="card-img-top" alt="" id="modalCardPic" ">
+        
+          <h5 class=" card-title" id="cardTitle"></h5>
+          <p class="card-text" id="ModalP"></p>
+          
+             <button class="" id="delBtn"></button>
+             <button class="" id="refreshBTN"></button>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+
+  <div class="modal fade" data-bs-backdrop="static" id="staticBackdrop">
+    <div class="modal-dialog modal-dialog-centered ">
       <div class="modal-content">
         <div class="modal-header">
+
           <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
-          <button class="" id="delBtn"></button>
-          <button class="" id="refreshBTN"></button>
         </div>
         <div class="modal-body" id="ModalBody">
           ...
@@ -67,14 +112,14 @@ document.getElementById("previous").onclick= ()=>{
       </div>
     </div>
   </div>
-  
+
   <div class="container container-sm col-4 table-responsive-sm">
     <div id="Alert"></div>
     <nav aria-label="Page navigation example" id="page">
       <ul class="pagination justify-content-end">
         <li class="page-item"><a class="page-link" href="#" id="previous">Previous</a></li>
-     
-        <li class="page-item"><a class="page-link" href="#" id="next" >Next</a></li>
+
+        <li class="page-item"><a class="page-link" href="#" id="next">Next</a></li>
       </ul>
     </nav>
     <table class="table table-striped table-hover table-borderless ">
@@ -86,14 +131,14 @@ document.getElementById("previous").onclick= ()=>{
           <p class="card-text placeholder-glow">
             <span class="placeholder col-7"></span>
             <span class="placeholder col-4"></span>
-          <span class="placeholder col-4"></span>
-          <span class="placeholder col-6"></span>
-          <span class="placeholder col-8"></span>
-        </p>
-      </div>
+            <span class="placeholder col-4"></span>
+            <span class="placeholder col-6"></span>
+            <span class="placeholder col-8"></span>
+          </p>
+        </div>
       </tbody>
     </table>
-  </div> 
+  </div>
 </body>
 
 </html>
