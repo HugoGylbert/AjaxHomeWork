@@ -1,14 +1,15 @@
 function getData(API = "https://reqres.in/api/users/") {
   document.getElementById("placeholder").style.display = "block";
-  
 
-      fetch(API, {method: "GET"}).then(checkErrorsApi).then(showContent).catch(TopinfoFlag);
- 
+  fetch(API, { method: "GET" })
+    .then(checkErrorsApi)
+    .then(showContent)
+    .catch(TopinfoFlag);
 }
 function deleteData(w) {
   document.getElementById("placeholder").style.display = "block";
   const DeleteUrl = `https://reqres.in/api/users/${w.id}`;
-  fetch(DeleteUrl, {method: "DELETE"})
+  fetch(DeleteUrl, { method: "DELETE" })
     .then((res) => {
       if (res.status !== 204) {
         throw new Error("Something went wrong, try it later.");
@@ -22,7 +23,6 @@ function deleteData(w) {
 }
 
 function checkErrorsApi(data) {
-    console.log(data)
   switch (data.status) {
     case 404:
       throw new Error("Nem található a keresett cím: " + data.url);
@@ -59,8 +59,9 @@ function TopinfoFlag(e, t = 10) {
 }
 function showContent(data) {
   const tableBody = document.getElementById("tbody");
-  
-  const placeholder = (document.getElementById("placeholder").style.display = "none");
+
+  const placeholder = (document.getElementById("placeholder").style.display =
+    "none");
   for (let c of data.data) {
     tableBody.appendChild(createContentHtml(c, data));
 
@@ -119,56 +120,51 @@ function createContentHtml(w) {
   return tableRow;
 }
 function createCard(w) {
-    const url = `https://reqres.in/api/users/${w.id}`;
-    fetch(url, {method: "GET"})
+  const url = `https://reqres.in/api/users/${w.id}`;
+  fetch(url, { method: "GET" })
     .then(checkErrorsApi)
     .then((d) => {
-        const newFetchData = d.data;
-        
-        
-        const delBTN  = document.getElementById("delBtn")
-        delBTN.classList.add("btn", "btn-danger","m-3","btn-sm")
-        delBTN.innerText="Delete"
-        delBTN.onclick=()=>{
-            RUSureDelete(newFetchData)
-            ModalCardDiv.hide()
-        }
+      const newFetchData = d.data;
 
-        const refreshBTN  = document.getElementById("refreshBTN")
-        refreshBTN.classList.add("btn", "btn-dark","m-2","btn-sm")
-        refreshBTN.innerText="Modify"
-        
-        refreshBTN.onclick=()=>{
-            
-        }
+      const delBTN = document.getElementById("delBtn");
+      delBTN.classList.add("btn", "btn-danger", "float-end", "btn-sm");
+      delBTN.innerText = "Delete";
+      delBTN.onclick = () => {
+        RUSureDelete(newFetchData);
+        ModalCardDiv.hide();
+      };
 
-        const CarddivContainer = document.getElementById("CardModalBody");
-      
+      const refreshBTN = document.getElementById("refreshBTN");
+      refreshBTN.classList.add("btn", "btn-warning", "float-start", "btn-sm");
+      refreshBTN.innerText = "Modify";
 
-      CarddivContainer.appendChild(refreshBTN)
-      CarddivContainer.appendChild(delBTN)
-      
+      refreshBTN.onclick = () => {
+        modifApiData(w);
+        ModalCardDiv.hide();
+      };
+
       const CarddivBody = document.getElementById("ModalP");
       CarddivBody.innerHTML = `<i><a href=mailto:>  ${newFetchData.email}</a></i>`;
 
-
-      const ModalCardDiv = new bootstrap.Modal(document.getElementById("ModalCard"));
+      const ModalCardDiv = new bootstrap.Modal(
+        document.getElementById("ModalCard")
+      );
       const cardTitle = document.getElementById("cardTitle");
       cardTitle.innerText = `${newFetchData.first_name} ${newFetchData.last_name} `;
 
-
       const pic = document.getElementById("modalCardPic");
-       pic.src = `${newFetchData.avatar}`;
-       
-     
+      pic.src = `${newFetchData.avatar}`;
+
       ModalCardDiv.show();
-     // console.log(ModalCardDiv._isShown);
+      // console.log(ModalCardDiv._isShown);
     })
 
     .catch(TopinfoFlag);
 }
 function RUSureDelete(w) {
-  const myModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
+  const myModal = new bootstrap.Modal(
+    document.getElementById("staticBackdrop")
+  );
   myModal.show();
   const ModalTitle = document.getElementById("staticBackdropLabel");
   const ModalBody = document.getElementById("ModalBody");
@@ -182,4 +178,45 @@ function RUSureDelete(w) {
   };
 
   return false;
+}
+function modifApiData(w) {
+  const modif = new bootstrap.Modal(document.getElementById("ModalModifyCard"));
+  modif.show();
+
+  const ModifHeader = document.getElementById("modifHeader");
+  ModifHeader.innerHTML = `# ${w.id}  ${w.last_name} ${w.first_name} <br> Are you sure you want to modify? `;
+
+  const Fname = document.getElementById("modifFName");
+  Fname.value = w.first_name;
+  const Lname = document.getElementById("modifLName");
+  Lname.value = w.last_name;
+  const mail = document.getElementById("modifEmail");
+  mail.value = w.email;
+  const PicUrl = document.getElementById("modifURL");
+  PicUrl.value = w.avatar;
+  const modify = document.getElementById("ModifyBtn");
+
+  modify.onclick = () => {
+    modif.hide();
+    const f = fetch(`https://reqres.in/api/users/${w.id}`, {
+      method: "POST",
+      headers: { "content-Type": "application/json;charset-utf-8" },
+      body:{
+
+          data: JSON.stringify({
+              id: w.id,
+              email: "mail.value",
+              first_name: Fname.value,
+              last_name: Lname.value,
+              avatar: PicUrl.value,
+            }),
+        }
+    })
+      .then(checkErrorsApi)
+      .then(Mylog)
+        .catch(TopinfoFlag);
+  };
+}
+function Mylog (g) {
+console.log(g)
 }
