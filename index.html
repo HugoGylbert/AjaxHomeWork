@@ -36,13 +36,13 @@ document.getElementById("previous").onclick= ()=>{
   
   <div class="modal fade"  id="ModalCard" >
     <div class="modal-dialog modal-dialog-centered" id="ModalCardContainer">
-      <div class="modal-content" id="CardModalBody">
+      <div class="modal-content" >
       <div class="card" >
         <img src="" class="card-img-top" alt="" id="modalCardPic">
-        <div class="card-body">
-          <h5 class="card-title" id="cardTitle">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+        <div class="card-body" id="CardModalBody" >
+          <h5 class="card-title" id="cardTitle"></h5>
+          <p class="card-text" id="ModalP"></p>
+                  
         </div>
       </div>
   </div>
@@ -54,7 +54,8 @@ document.getElementById("previous").onclick= ()=>{
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
-          
+          <button class="" id="delBtn"></button>
+          <button class="" id="refreshBTN"></button>
         </div>
         <div class="modal-body" id="ModalBody">
           ...

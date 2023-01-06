@@ -2,7 +2,7 @@
   "name": "home_work_ajax",
   "version": "1.0.0",
   "description": "Ajax házi feladat",
-  "main": "script.js",
+  "main": "index.html",
   "scripts": {
     "test": ""
   },
