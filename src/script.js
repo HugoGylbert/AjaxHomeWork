@@ -1,15 +1,28 @@
+var month_hu = [
+  "Január",
+  "Február",
+  "Március",
+  "Aprilis",
+  "Május",
+  "Június",
+  "Július",
+  "Augusztus",
+  "Szeptember",
+  "Október",
+  "November",
+  "December",
+];
+var day_hu = ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
+
 function getData(API = "https://reqres.in/api/users/") {
   document.getElementById("placeholder").style.display = "block";
 
-  fetch(API, { method: "GET" })
-    .then(checkErrorsApi)
-    .then(showContent)
-    .catch(TopinfoFlag);
+  fetch(API, {method: "GET"}).then(checkErrorsApi).then(showContent).catch(TopinfoFlag);
 }
 function deleteData(w) {
   document.getElementById("placeholder").style.display = "block";
   const DeleteUrl = `https://reqres.in/api/users/${w.id}`;
-  fetch(DeleteUrl, { method: "DELETE" })
+  fetch(DeleteUrl, {method: "DELETE"})
     .then((res) => {
       if (res.status !== 204) {
         throw new Error("Something went wrong, try it later.");
@@ -31,6 +44,7 @@ function checkErrorsApi(data) {
       throw new Error("Server Error");
       break;
     case 200:
+      TopinfoFlag(`Connetion successful`, 5);
       return data.json();
       break;
     default:
@@ -60,8 +74,7 @@ function TopinfoFlag(e, t = 10) {
 function showContent(data) {
   const tableBody = document.getElementById("tbody");
 
-  const placeholder = (document.getElementById("placeholder").style.display =
-    "none");
+  const placeholder = (document.getElementById("placeholder").style.display = "none");
   for (let c of data.data) {
     tableBody.appendChild(createContentHtml(c, data));
 
@@ -121,7 +134,7 @@ function createContentHtml(w) {
 }
 function createCard(w) {
   const url = `https://reqres.in/api/users/${w.id}`;
-  fetch(url, { method: "GET" })
+  fetch(url, {method: "GET"})
     .then(checkErrorsApi)
     .then((d) => {
       const newFetchData = d.data;
@@ -146,9 +159,7 @@ function createCard(w) {
       const CarddivBody = document.getElementById("ModalP");
       CarddivBody.innerHTML = `<i><a href=mailto:>  ${newFetchData.email}</a></i>`;
 
-      const ModalCardDiv = new bootstrap.Modal(
-        document.getElementById("ModalCard")
-      );
+      const ModalCardDiv = new bootstrap.Modal(document.getElementById("ModalCard"));
       const cardTitle = document.getElementById("cardTitle");
       cardTitle.innerText = `${newFetchData.first_name} ${newFetchData.last_name} `;
 
@@ -162,9 +173,7 @@ function createCard(w) {
     .catch(TopinfoFlag);
 }
 function RUSureDelete(w) {
-  const myModal = new bootstrap.Modal(
-    document.getElementById("staticBackdrop")
-  );
+  const myModal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
   myModal.show();
   const ModalTitle = document.getElementById("staticBackdropLabel");
   const ModalBody = document.getElementById("ModalBody");
@@ -199,24 +208,48 @@ function modifApiData(w) {
   modify.onclick = () => {
     modif.hide();
     const f = fetch(`https://reqres.in/api/users/${w.id}`, {
-      method: "POST",
-      headers: { "content-Type": "application/json;charset-utf-8" },
-      body:{
-
-          data: JSON.stringify({
-              id: w.id,
-              email: "mail.value",
-              first_name: Fname.value,
-              last_name: Lname.value,
-              avatar: PicUrl.value,
-            }),
-        }
+      method: "PUT",
+      headers: {"content-Type": "application/json;charset-utf-8"},
+      body: {
+        data: JSON.stringify({
+          id: w.id,
+          email: mail.value,
+          first_name: Fname.value,
+          last_name: Lname.value,
+          avatar: PicUrl.value,
+        }),
+      },
     })
-      .then(checkErrorsApi)
       .then(Mylog)
-        .catch(TopinfoFlag);
+      .then((g) => {
+        
+        const date = new Date(Date.parse(g.updatedAt));
+        const option = {weekday: "long"};
+        const optionm = {month: "long"};
+        const PrintDate_HU = `${date.getFullYear()}. ${month_hu[date.getMonth()]}  ${date.getDate()}., ${
+          day_hu[date.getDay()]
+        } ${
+          date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()
+        }:${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()}`;
+        const PrintDate_EN = `${Intl.DateTimeFormat("en-US", option).format(date.getDay())}, ${Intl.DateTimeFormat(
+          "en-US",
+          optionm
+        ).format(date.getMonth())} ${date.getDate()}, ${date.getFullYear()} ${
+          date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()
+        }:${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()} `;
+        console.log(PrintDate_HU);
+        console.log(PrintDate_EN);
+        TopinfoFlag(` Modify Success at: ${PrintDate_EN}`, 10);
+      })
+      .catch(TopinfoFlag);
+
+    return false;
   };
 }
-function Mylog (g) {
-console.log(g)
+function Mylog(g) {
+  if (g.status === 200) {
+    return g.json();
+  } else {
+    checkErrorsApi(g);
+  }
 }
