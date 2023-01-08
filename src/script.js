@@ -14,11 +14,19 @@ var month_hu = [
 ];
 var day_hu = ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
 
+var primaryData;
+function loadAllData(data) {
+  primaryData = data;
+
+  console.log(primaryData);
+}
+
 function getData(API = "https://reqres.in/api/users/") {
   document.getElementById("placeholder").style.display = "block";
 
   fetch(API, {method: "GET"}).then(checkErrorsApi).then(showContent).catch(TopinfoFlag);
 }
+
 function deleteData(w) {
   document.getElementById("placeholder").style.display = "block";
   const DeleteUrl = `https://reqres.in/api/users/${w.id}`;
@@ -29,7 +37,10 @@ function deleteData(w) {
       } else {
         TopinfoFlag(`${w.first_name} ${w.last_name}'s data deleted!`, 5);
         document.getElementById("tbody").innerHTML = "";
-        getData();
+
+        setTimeout(() => {
+          getData();
+        }, 3 * 1000);
       }
     })
     .catch(TopinfoFlag);
@@ -44,14 +55,14 @@ function checkErrorsApi(data) {
       throw new Error("Server Error");
       break;
     case 200:
-      TopinfoFlag(`Connetion successful`, 5);
+      TopinfoFlag(`Connetion successful`, 2);
       return data.json();
       break;
     default:
       return data.json();
   }
 }
-function TopinfoFlag(e, t = 10) {
+function TopinfoFlag(e, t = 4) {
   const alert = document.getElementById("Alert");
   alert.style.visibility = "visible";
   alert.style.display = "block";
@@ -70,23 +81,33 @@ function TopinfoFlag(e, t = 10) {
     alert.style.visibility = "hidden";
     alert.style.display = "none";
   }, t * 1000);
+  return;
 }
 function showContent(data) {
   const tableBody = document.getElementById("tbody");
-
+  primaryData = data;
   const placeholder = (document.getElementById("placeholder").style.display = "none");
   for (let c of data.data) {
     tableBody.appendChild(createContentHtml(c, data));
-
-    /*.innerHTML = `<img src=${c.avatar}
-     class="img-fluid img-thumbnail rounded-circle" > `;
-    tableRow.appendChild(document.createElement("td")).innerHTML =`<b> ${c.first_name} ${c.last_name} </b><br> <i>  <a href="mailto:"> ${c.email}</a></i>`;
-    
-    tableRowHead.innerHTML =`# ${c.id} `;*/
   }
+
+  // try section -->
+
+  /*
+  const UserDbShow = 1;
+
+  
+  for (let i = 0; i < UserDbShow; i++) {
+    for (let h = 0; h < data.data.length; h++) {
+      
+      tableBody.appendChild(createContentHtml(data.data[h], data));
+      
+    }
+  }*/
+
 }
 
-function createContentHtml(w) {
+function createContentHtml(w, data) {
   const tableRow = document.createElement("tr");
   const tableRowHead = document.createElement("th");
   const img = document.createElement("img");
@@ -188,6 +209,41 @@ function RUSureDelete(w) {
 
   return false;
 }
+
+function MatchDataInput(input, pattern, btn = undefined, text = "Not a valid input") {
+  input.classList.remove("is-valid");
+  input.classList.remove("is-invalid");
+
+  if (btn !== undefined) {
+    btn.classList.remove("disabled");
+    btn.classList.remove("enabled");
+  }
+
+  const inputParent = input.parentNode;
+
+  const tooltip = document.createElement("div");
+  tooltip.classList.remove();
+
+  if (input.value.match(pattern)) {
+    input.classList.add("is-valid");
+    return true;
+  } else {
+    tooltip.innerText = text;
+    tooltip.classList.add("invalid-tooltip");
+    inputParent.appendChild(tooltip);
+    input.classList.add("is-invalid");
+    if (btn !== undefined) {
+      btn.classList.add("disabled");
+    }
+
+    return false;
+  }
+}
+const namePattern = "^[A-ZÖÜÓŐÚÉÁŰÍ]{1}[a-zíöüóőúéáű]{1,15}$";
+const emailPattern = new RegExp(
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+);
+const httpPattern = "^https?://.*/.*.(png|gif|webp|jpeg|jpg)??.*$";
 function modifApiData(w) {
   const modif = new bootstrap.Modal(document.getElementById("ModalModifyCard"));
   modif.show();
@@ -197,16 +253,38 @@ function modifApiData(w) {
 
   const Fname = document.getElementById("modifFName");
   Fname.value = w.first_name;
+
+  Fname.onkeyup = () => {
+    MatchDataInput(Fname, namePattern, modify, "Start uppercase, max 15 alphabetic character long");
+  };
   const Lname = document.getElementById("modifLName");
   Lname.value = w.last_name;
+
+  Lname.onkeyup = () => {
+    MatchDataInput(Lname, namePattern, modify, "Start uppercase, max 15 alphabetic character long");
+  };
+
   const mail = document.getElementById("modifEmail");
   mail.value = w.email;
+
+  mail.onkeyup = () => {
+    MatchDataInput(mail, emailPattern, modify, "Not valid email format");
+  };
+
   const PicUrl = document.getElementById("modifURL");
   PicUrl.value = w.avatar;
-  const modify = document.getElementById("ModifyBtn");
 
+  PicUrl.onkeyup = () => {
+    MatchDataInput(PicUrl, httpPattern, modify, "Not valid Url format");
+  };
+  const modify = document.getElementById("ModifyBtn");
+  MatchDataInput(Fname, namePattern, modify, "Start uppercase, max 15 alphabetic character long");
+  MatchDataInput(Lname, namePattern, modify, "Start uppercase, max 15 alphabetic character long");
+  MatchDataInput(mail, emailPattern, modify, "Not valid email format");
+  MatchDataInput(PicUrl, httpPattern, modify, "Not valid Url format");
   modify.onclick = () => {
     modif.hide();
+    document.getElementById("placeholder").style.display = "block";
     const f = fetch(`https://reqres.in/api/users/${w.id}`, {
       method: "PUT",
       headers: {"content-Type": "application/json;charset-utf-8"},
@@ -222,34 +300,166 @@ function modifApiData(w) {
     })
       .then(Mylog)
       .then((g) => {
-        
         const date = new Date(Date.parse(g.updatedAt));
         const option = {weekday: "long"};
         const optionm = {month: "long"};
         const PrintDate_HU = `${date.getFullYear()}. ${month_hu[date.getMonth()]}  ${date.getDate()}., ${
           day_hu[date.getDay()]
-        } ${
-          date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()
-        }:${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()}`;
+        } ${date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()}:${
+          date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()
+        }`;
         const PrintDate_EN = `${Intl.DateTimeFormat("en-US", option).format(date.getDay())}, ${Intl.DateTimeFormat(
           "en-US",
           optionm
         ).format(date.getMonth())} ${date.getDate()}, ${date.getFullYear()} ${
           date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()
         }:${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()} `;
-        console.log(PrintDate_HU);
-        console.log(PrintDate_EN);
-        TopinfoFlag(` Modify Success at: ${PrintDate_EN}`, 10);
+        console.log("modify: " +PrintDate_HU);
+        console.log("modify: " +PrintDate_EN);
+        TopinfoFlag(` Modify Success at: ${PrintDate_EN}`, 4);
       })
       .catch(TopinfoFlag);
-
+    document.getElementById("tbody").innerHTML = "";
+    setTimeout(() => {
+      getData();
+    }, 5 * 1000);
     return false;
   };
 }
 function Mylog(g) {
-  if (g.status === 200) {
+  if (g.status === 200 || g.status === 201) {
+   
     return g.json();
   } else {
+    console.log("nem ok");
     checkErrorsApi(g);
   }
+}
+
+function AddApiData(w) {
+  let isValidFname = false;
+  let isValidLname = false;
+  let isValidmail = false;
+  let isValidPicUrl = false;
+
+  const Fname = document.getElementById("AddNewFName");
+  Fname.value = "";
+
+  Fname.onkeyup = () => {
+    isValidFname = MatchDataInput(Fname, namePattern, modify, "Start uppercase, max 15 alphabetic character long");
+    if ((isValidFname, isValidLname, isValidmail, isValidPicUrl == false)) {
+      modify.classList.remove("enabled");
+      modify.classList.add("disabled");
+    } else {
+      modify.classList.remove("disabled");
+      modify.classList.add("enabled");
+    }
+  };
+  const Lname = document.getElementById("AddNewLName");
+  Lname.value = "";
+
+  Lname.onkeyup = () => {
+    isValidLname = MatchDataInput(Lname, namePattern, modify, "Start uppercase, max 15 alphabetic character long");
+    if (isValidFname, isValidLname, isValidmail, isValidPicUrl == false) {
+      modify.classList.add("disabled");
+      modify.classList.remove("enabled");
+    } else {
+      modify.classList.remove("disabled");
+      modify.classList.add("enabled");
+    }
+  };
+
+  const mail = document.getElementById("AddNewEmail");
+  mail.value = "";
+
+  mail.onkeyup = () => {
+    isValidmail = MatchDataInput(mail, emailPattern, modify, "Not valid email format");
+    if ((isValidFname, isValidLname, isValidmail, isValidPicUrl == false)) {
+      modify.classList.add("disabled");
+      modify.classList.remove("enabled");
+    } else {
+      modify.classList.remove("disabled");
+      modify.classList.add("enabled");
+    }
+  };
+
+  const PicUrl = document.getElementById("AddNewURL");
+  PicUrl.value = "";
+
+  PicUrl.onkeyup = () => {
+    isValidPicUrl = MatchDataInput(PicUrl, httpPattern, modify, "Not valid Url format");
+    if ((isValidFname, isValidLname, isValidmail, isValidPicUrl == false)) {
+      modify.classList.add("disabled");
+      modify.classList.remove("enabled");
+    } else {
+      modify.classList.remove("disabled");
+      modify.classList.add("enabled");
+    }
+  };
+
+  const modify = document.getElementById("AddNewBtn");
+
+  if (isValidFname,isValidLname, isValidmail, isValidPicUrl == false) {
+    modify.classList.add("disabled");
+    modify.classList.remove("enabled");
+  } else {
+    modify.classList.remove("disabled");
+    modify.classList.add("enabled");
+  }
+
+  modify.onclick = () => {
+
+    document.getElementById("placeholder").style.display = "block"; //load
+    const f = fetch(`https://reqres.in/api/users/`, {
+      method: "POST",
+      headers: {"content-Type": "application/json;charset-utf-8"},
+      body: {
+        data: JSON.stringify({
+          email: mail.value,
+          first_name: Fname.value,
+          last_name: Lname.value,
+          avatar: PicUrl.value,
+        }),
+      },
+    })
+      .then(Mylog)
+      .then((g) => {
+        const date = new Date(Date.parse(g.createdAt));
+        const option = {weekday: "long"};
+        const optionm = {month: "long"};
+        const PrintDate_HU = `${date.getFullYear()}. ${month_hu[date.getMonth()]}  ${date.getDate()}., ${
+          day_hu[date.getDay()]
+        } ${date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()}:${
+          date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()
+        }`;
+        const PrintDate_EN = `${Intl.DateTimeFormat("en-US", option).format(date.getDay())}, ${Intl.DateTimeFormat(
+          "en-US",
+          optionm
+        ).format(date.getMonth())} ${date.getDate()}, ${date.getFullYear()} ${
+          date.getHours() < 10 ? "0" + date.getHours().toString() : date.getHours()
+        }:${date.getMinutes() < 10 ? "0" + date.getMinutes().toString() : date.getMinutes()} `;
+        console.log("created: " +PrintDate_HU);
+        console.log("created: " +PrintDate_EN);
+        TopinfoFlag(` Create new user id is ${g.id}, \n Success at: ${PrintDate_EN}`, 5);
+      })
+      .catch(TopinfoFlag);
+    document.getElementById("tbody").innerHTML = "";
+    Lname.value = "";
+    Lname.classList.remove("is-valid", "is-invalid");
+
+    Fname.value = "";
+    Fname.classList.remove("is-valid", "is-invalid");
+
+    mail.value = "";
+    mail.classList.remove("is-valid", "is-invalid");
+
+    PicUrl.value = "";
+    PicUrl.classList.remove("is-valid", "is-invalid");
+
+    document.getElementById("collapsebutton").click();
+    setTimeout(() => {
+      getData();
+    }, 6 * 1000);
+    return false;
+  };
 }
